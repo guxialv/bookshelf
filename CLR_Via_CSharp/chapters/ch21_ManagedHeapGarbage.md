@@ -615,7 +615,7 @@ public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
     protected override bool ReleaseHandle() {
          // 告诉 Windows 我们希望本机资源关闭
-        return Win32Native.ColseHandle(base.handle);
+        return Win32Native.CloseHandle(base.handle);
     }
 }
 ```
@@ -895,7 +895,7 @@ public sealed class HandleCollector {
 
 如果一个类要包装数量有限制的本机资源，就应该使用该类的实例来提示垃圾回收器实际要使用资源的多少个实例。该类的对象会在内部监视这个计数，计数太大就强制垃圾回收。
 
-> 注意 在内部，`GC.AddMemoryPressure` 和 `HandleCollector.Add` 方法会调用 `GC.Collect` ，在第 0 代超过预算前强制进行 GC。一般都强烈反对强制开始一次垃圾回收，因为它会对应用程序性能造成负面影响。但是，类之所以调用这些方法，是为了保证应用程序性能造成负面影响。但是，类之所以调用这些方法，是为了保证应用程序能用上有限的本机资源。本地资源用光了，应用程序就会失败。对于大多数应用程序，性能遭受一些损失总胜于完全无法运行。
+> 注意：在内部，`GC.AddMemoryPressure` 和 `HandleCollector.Add` 方法会调用 `GC.Collect` ，在第 0 代超过预算前强制进行 GC。一般都强烈反对强制开始一次垃圾回收，因为它会对应用程序性能造成负面影响。但是，类之所以调用这些方法，是为了保证应用程序能用上有限的本机资源。本地资源用光了，应用程序就会失败。对于大多数应用程序，性能遭受一些损失总胜于完全无法运行。
 
 以下代码演示了内存压力方法及 `HandleCollector` 类的使用和效果：
 
